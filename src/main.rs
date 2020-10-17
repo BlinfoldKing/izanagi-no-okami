@@ -7,8 +7,9 @@ use dotenv::dotenv;
 use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
 use serenity::framework::standard::StandardFramework;
-use serenity::model::{channel::Message, gateway::Ready, id::GuildId};
+use serenity::model::{channel::Message, gateway::{Ready, Activity}, id::GuildId};
 use std::env;
+use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 
@@ -61,15 +62,24 @@ impl EventHandler for Handler {
                         } else {
                             reminder.schedules.push(s)
                         }
-
-                        tokio::time::delay_for(Duration::from_millis(10)).await;
                     }
+                    
+                    set_status_to_current_time(&ctx).await;
+                    tokio::time::delay_for(Duration::from_millis(1000)).await;
                 }
             });
 
             self.is_loop_running.swap(true, Ordering::Relaxed);
         }
     }
+}
+
+async fn set_status_to_current_time(ctx: &Context) {
+    let current_time = Utc::now();
+    let indo_time = FixedOffset::east(7 * 3600).from_utc_datetime(&Utc::now().naive_utc());
+
+    ctx.set_activity(Activity::listening(&format!("{:02}:{:02}:{:02}", 
+        indo_time.hour(), indo_time.minute(), indo_time.second()))).await;
 }
 
 #[tokio::main]
