@@ -1,1 +1,1 @@
-web: ./target/release/izanagi-no-okami
+worker: ./target/release/izanagi-no-okami
