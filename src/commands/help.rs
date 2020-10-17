@@ -4,7 +4,7 @@ use serenity::framework::standard::{Args, CommandResult};
 use serenity::model::channel::Message;
 
 #[command]
-pub async fn help(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+pub async fn help(ctx: &Context, msg: &Message, _args: Args) -> CommandResult {
     msg.channel_id.send_message(&ctx.http, |m| {
         m.content("Help");
         m.embed(|e| {

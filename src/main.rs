@@ -9,7 +9,6 @@ use serenity::client::{Client, Context, EventHandler};
 use serenity::framework::standard::StandardFramework;
 use serenity::model::{channel::Message, gateway::{Ready, Activity}, id::GuildId};
 use std::env;
-use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 
@@ -75,11 +74,10 @@ impl EventHandler for Handler {
 }
 
 async fn set_status_to_current_time(ctx: &Context) {
-    let current_time = Utc::now();
     let indo_time = FixedOffset::east(7 * 3600).from_utc_datetime(&Utc::now().naive_utc());
 
-    ctx.set_activity(Activity::listening(&format!("{:02}:{:02}:{:02}", 
-        indo_time.hour(), indo_time.minute(), indo_time.second()))).await;
+    ctx.set_activity(Activity::listening(&format!("{:02}:{:02}", 
+        indo_time.hour(), indo_time.minute()))).await;
 }
 
 #[tokio::main]
