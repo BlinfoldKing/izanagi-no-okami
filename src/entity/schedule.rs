@@ -5,7 +5,7 @@ use serenity::prelude::*;
 pub struct Schedule {
     pub message: Message,
     pub query: String,
-    pub date_time: NaiveDateTime,
+    pub date_time: DateTime<FixedOffset>,
 }
 
 pub struct ReminderController {

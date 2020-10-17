@@ -9,6 +9,7 @@ version = "0.1.0"
 [dependencies]
 chrono = "0.4.18"
 chrono-english = "0.1.4"
+chrono-tz = "0.5.3"
 date_time_parser = "0.1.0"
 dotenv = "0.15.0"
 serenity = {version = "0.9.0-rc.2", default-features = false, features = ["cache", "client", "gateway", "rustls_backend", "model", "standard_framework", "builder"]}

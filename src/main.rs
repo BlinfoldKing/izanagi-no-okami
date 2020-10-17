@@ -1,4 +1,5 @@
 extern crate chrono;
+extern crate chrono_tz;
 extern crate date_time_parser;
 
 use chrono::prelude::*;
@@ -50,8 +51,8 @@ impl EventHandler for Handler {
                     let schedule = reminder.schedules.pop();
                     if let Some(s) = schedule {
                         let date = s.date_time;
-                        let now = Local::now().naive_local();
-
+                        let now = Utc::now().with_timezone(&chrono::FixedOffset::east(7 * 3600));
+                        
                         if now.timestamp() > date.timestamp() {
                             let _ = s
                                 .message
