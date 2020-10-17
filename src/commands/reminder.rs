@@ -32,7 +32,7 @@ pub async fn remind(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
 
     let mut data = ctx.data.write().await;
     let reminder = data.get_mut::<Reminder>().unwrap();
-    msg.reply(ctx, format!("reminder set to: {}/{}/{} {:02}:{:02}",
+    msg.reply(ctx, format!("reminder set to: {}-{}-{} {:02}:{:02}",
       date_time.date().year(),
       date_time.date().month(),
       date_time.date().day(),
