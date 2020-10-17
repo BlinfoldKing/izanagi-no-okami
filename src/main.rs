@@ -1,39 +1,21 @@
+extern crate chrono;
+extern crate date_time_parser;
+
+use chrono::prelude::*;
 use dotenv::dotenv;
 use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
-use serenity::framework::standard::{
-    macros::{command, group},
-    Args, CommandResult, StandardFramework,
-};
+use serenity::framework::standard::StandardFramework;
 use serenity::model::{channel::Message, gateway::Ready, id::GuildId};
-use serenity::prelude::*;
 use std::env;
-
-extern crate chrono;
-use chrono::prelude::*;
-
-extern crate date_time_parser;
-use date_time_parser::{DateParser, TimeParser};
-
-use std::boxed::Box;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 
-use std::sync::atomic::{AtomicBool, Ordering};
+pub mod commands;
+pub mod entity;
 
-struct Schedule {
-    message: Message,
-    query: String,
-    date_time: NaiveDateTime,
-}
-
-struct ReminderController {
-    schedules: Vec<Schedule>,
-}
-
-struct Reminder;
-impl TypeMapKey for Reminder {
-    type Value = ReminderController;
-}
+use commands::*;
+use entity::schedule::*;
 
 struct Handler {
     is_loop_running: AtomicBool,
@@ -87,38 +69,6 @@ impl EventHandler for Handler {
             self.is_loop_running.swap(true, Ordering::Relaxed);
         }
     }
-}
-
-#[group]
-#[commands(ping, remind)]
-struct General;
-
-#[command]
-async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.channel_id.say(ctx, "Pong!").await?;
-
-    Ok(())
-}
-
-#[command]
-async fn remind(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
-    let query = args.raw().collect::<Vec<&str>>().join(" ");
-    let date = DateParser::parse(&query).unwrap_or(Local::now().naive_local().date());
-    let time = TimeParser::parse(&query).unwrap_or(Local::now().time());
-    let date_time = date.and_time(time);
-
-    let mut data = ctx.data.write().await;
-    let reminder = data.get_mut::<Reminder>().unwrap();
-    msg.reply(ctx, format!("reminder set to: {:?}", date_time))
-        .await?;
-
-    reminder.schedules.push(Schedule {
-        message: msg.clone(),
-        query: query,
-        date_time: date_time,
-    });
-
-    Ok(())
 }
 
 #[tokio::main]
