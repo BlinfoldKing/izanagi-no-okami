@@ -7,7 +7,11 @@ use dotenv::dotenv;
 use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
 use serenity::framework::standard::StandardFramework;
-use serenity::model::{channel::Message, gateway::{Ready, Activity}, id::GuildId};
+use serenity::model::{
+    channel::Message,
+    gateway::{Activity, Ready},
+    id::GuildId,
+};
 use std::env;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
@@ -52,7 +56,6 @@ impl EventHandler for Handler {
                     if let Some(s) = schedule {
                         let date = s.date_time;
                         let now = Utc::now().with_timezone(&chrono::FixedOffset::east(7 * 3600));
-                        
                         if now.timestamp() > date.timestamp() {
                             let _ = s
                                 .message
@@ -62,7 +65,6 @@ impl EventHandler for Handler {
                             reminder.schedules.push(s)
                         }
                     }
-                    
                     set_status_to_current_time(&ctx).await;
                     tokio::time::delay_for(Duration::from_millis(1000)).await;
                 }
@@ -76,8 +78,12 @@ impl EventHandler for Handler {
 async fn set_status_to_current_time(ctx: &Context) {
     let indo_time = FixedOffset::east(7 * 3600).from_utc_datetime(&Utc::now().naive_utc());
 
-    ctx.set_activity(Activity::listening(&format!("{:02}:{:02}", 
-        indo_time.hour(), indo_time.minute()))).await;
+    ctx.set_activity(Activity::listening(&format!(
+        "{:02}:{:02}",
+        indo_time.hour(),
+        indo_time.minute()
+    )))
+    .await;
 }
 
 #[tokio::main]

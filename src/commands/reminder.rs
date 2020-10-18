@@ -20,7 +20,7 @@ pub async fn remind(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     let wib = chrono::FixedOffset::east(7 * 3600);
 
     let default_datetime = Utc::now().with_timezone(&wib);
-    let date =     if let Some(d) = DateParser::parse(&query) {
+    let date = if let Some(d) = DateParser::parse(&query) {
         wib.ymd(d.year(), d.month(), d.day())
     } else {
         default_datetime.date()
@@ -32,13 +32,18 @@ pub async fn remind(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
 
     let mut data = ctx.data.write().await;
     let reminder = data.get_mut::<Reminder>().unwrap();
-    msg.reply(ctx, format!("reminder set to: {}-{}-{} {:02}:{:02}",
-      date_time.date().year(),
-      date_time.date().month(),
-      date_time.date().day(),
-      date_time.time().hour(), 
-      date_time.time().minute()))
-        .await?;
+    msg.reply(
+        ctx,
+        format!(
+            "reminder set to: {}-{}-{} {:02}:{:02}",
+            date_time.date().year(),
+            date_time.date().month(),
+            date_time.date().day(),
+            date_time.time().hour(),
+            date_time.time().minute()
+        ),
+    )
+    .await?;
 
     reminder.schedules.push(Schedule {
         message: msg.clone(),

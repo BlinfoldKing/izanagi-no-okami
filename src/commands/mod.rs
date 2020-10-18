@@ -1,10 +1,10 @@
 use serenity::framework::standard::macros::group;
 
-pub mod reminder;
 pub mod help;
+pub mod reminder;
 
-use reminder::*;
 use help::*;
+use reminder::*;
 
 #[group]
 #[commands(ping, remind, help)]
